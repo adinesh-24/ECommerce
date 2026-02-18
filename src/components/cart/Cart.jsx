@@ -1,0 +1,201 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+export default function Cart() {
+
+  const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  // ================= FETCH CART =================
+
+  const fetchCart = async () => {
+    try {
+      const res = await api.get("/cart");
+      setCart(res.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  // ================= UPDATE QTY =================
+
+  const updateQty = async (id, qty) => {
+
+    if (qty < 1) return;
+
+    try {
+
+      await api.put(`/cart/${id}`, {
+        quantity: qty
+      });
+
+      setCart(prev =>
+        prev.map(item =>
+          item._id === id
+            ? {
+              ...item,
+              quantity: qty,
+              totalPrice: qty * item.price
+            }
+            : item
+        )
+      );
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // ================= REMOVE =================
+
+  const removeItem = async (id) => {
+    try {
+
+      await api.delete(`/cart/${id}`);
+
+      setCart(prev => prev.filter(item => item._id !== id));
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // ================= TOTAL =================
+
+  const grandTotal = cart.reduce(
+    (sum, item) => sum + item.totalPrice,
+    0
+  );
+
+  // ================= CHECKOUT =================
+
+  const handleCheckout = () => {
+
+    // example navigate to checkout page
+    navigate("/checkout");
+
+    // OR call payment API here
+  };
+
+  if (loading) return <h3 className="text-center mt-5">Loading...</h3>;
+
+  return (
+    <div className="container mt-5">
+
+      <div className="card p-4 shadow-sm">
+
+        <h4 className="mb-4">Shopping Bag</h4>
+
+        {cart.map(item => (
+
+          <div
+            key={item._id}
+            className="d-flex justify-content-between align-items-center border-bottom py-3"
+          >
+
+            {/* LEFT SIDE */}
+            <div className="d-flex align-items-center gap-3">
+
+              <button
+                className="btn btn-sm btn-light"
+                onClick={() => removeItem(item._id)}
+              >
+                ✕
+              </button>
+
+              <img
+                src={
+                  item.product.image
+                    ? `${import.meta.env.VITE_API_URL}/uploads/${item.product.image}`
+                    : "https://via.placeholder.com/80"
+                }
+                alt={item.product.title}
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  objectFit: "cover"
+                }}
+              />
+
+              <div>
+                <h6>{item.product.title}</h6>
+                <small className="text-muted">
+                  {item.product.category}
+                </small>
+              </div>
+
+            </div>
+
+            {/* RIGHT SIDE */}
+            <div className="d-flex align-items-center gap-4">
+
+              <div className="d-flex align-items-center gap-2">
+
+                <button
+                  className="btn btn-light"
+                  onClick={() =>
+                    updateQty(item._id, item.quantity - 1)
+                  }
+                >
+                  -
+                </button>
+
+                <span>{item.quantity}</span>
+
+                <button
+                  className="btn btn-light"
+                  onClick={() =>
+                    updateQty(item._id, item.quantity + 1)
+                  }
+                >
+                  +
+                </button>
+
+              </div>
+
+              <strong>₹{item.totalPrice}</strong>
+
+            </div>
+
+          </div>
+
+        ))}
+
+        {/* FOOTER */}
+        <div className="d-flex justify-content-between align-items-center mt-4">
+
+          <h5>Total: ₹{grandTotal}</h5>
+
+          <button
+            className="btn btn-dark px-4"
+            disabled={cart.length === 0}
+            onClick={handleCheckout}
+          >
+            Checkout
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  );
+}
