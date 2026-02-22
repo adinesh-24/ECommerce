@@ -141,14 +141,39 @@ export default function ProductForm() {
 
                 <div className="mb-3">
                   <label className="form-label">Category</label>
-                  <input
-                    type="text"
+                  <select
                     name="category"
-                    className="form-control"
+                    className="form-select"
                     value={form.category}
                     onChange={handleChange}
                     required
-                  />
+                  >
+                    <option value="">Select Category</option>
+                    {[
+                      "mobile",
+                      "laptop",
+                      "tablet",
+                      "smartwatch",
+                      "accessories",
+                      "headphones",
+                      "camera",
+                      "gaming",
+                      "monitor",
+                      "keyboard",
+                      "mouse",
+                      "speaker",
+                      "tv",
+                      "electronics",
+                      "home-appliances",
+                      "wearables",
+                      "storage-devices",
+                      "networking"
+                    ].map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="mb-3">

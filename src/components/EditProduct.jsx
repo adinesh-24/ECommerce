@@ -12,8 +12,12 @@ export default function EditProduct() {
     title: "",
     description: "",
     category: "",
-    price: ""
+    price: "",
+    image: null,
+    currentImage: ""
   });
+
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -37,7 +41,8 @@ export default function EditProduct() {
           title: product.title || "",
           description: product.description || "",
           category: product.category || "",
-          price: product.price || ""
+          price: product.price || "",
+          currentImage: product.image || ""
         });
 
       } catch (err) {
@@ -57,12 +62,23 @@ export default function EditProduct() {
 
   // ✅ Handle input change
   const handleChange = (e) => {
-
     setForm(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
+  };
 
+  // ✅ Handle file change
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setForm(prev => ({
+      ...prev,
+      image: file
+    }));
+
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
   // ✅ Submit update
@@ -75,12 +91,22 @@ export default function EditProduct() {
 
       const token = localStorage.getItem("token");
 
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("category", form.category);
+      formData.append("price", form.price);
+      if (form.image) {
+        formData.append("image", form.image);
+      }
+
       await axios.put(
         `${import.meta.env.VITE_API_URL}/updateProduct/${id}`,
-        form,
+        formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
           }
         }
       );
@@ -165,12 +191,39 @@ export default function EditProduct() {
                   <label className="form-label">
                     Category
                   </label>
-                  <input
+                  <select
                     name="category"
+                    className="form-select"
                     value={form.category}
                     onChange={handleChange}
-                    className="form-control"
-                  />
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {[
+                      "mobile",
+                      "laptop",
+                      "tablet",
+                      "smartwatch",
+                      "accessories",
+                      "headphones",
+                      "camera",
+                      "gaming",
+                      "monitor",
+                      "keyboard",
+                      "mouse",
+                      "speaker",
+                      "tv",
+                      "electronics",
+                      "home-appliances",
+                      "wearables",
+                      "storage-devices",
+                      "networking"
+                    ].map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Price */}
@@ -185,6 +238,48 @@ export default function EditProduct() {
                     onChange={handleChange}
                     className="form-control"
                   />
+                </div>
+
+                {/* Image Upload */}
+                {/* Current Image Display */}
+                <div className="mb-3">
+                  <label className="form-label">Current Image</label>
+                  <div className="mb-2">
+                    {form.currentImage ? (
+                      <img
+                        src={form.currentImage.startsWith('http') ? form.currentImage : `${import.meta.env.VITE_API_URL}/uploads/${form.currentImage}`}
+                        alt="Current Product"
+                        className="img-thumbnail"
+                        style={{ maxWidth: "200px", maxHeight: "200px" }}
+                      />
+                    ) : (
+                      <p className="text-muted">No image available</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Upload New Image */}
+                <div className="mb-4">
+                  <label className="form-label">Upload New Image</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+
+                  {/* New Image Preview */}
+                  {imagePreview && (
+                    <div className="mt-3 fade-in">
+                      <p className="mb-1 text-muted small">New Image Preview:</p>
+                      <img
+                        src={imagePreview}
+                        alt="New Preview"
+                        className="img-thumbnail"
+                        style={{ maxWidth: "200px", maxHeight: "200px" }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <button

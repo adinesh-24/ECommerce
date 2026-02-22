@@ -1,0 +1,108 @@
+/* Modern Navbar Styling */
+.custom-navbar {
+    background: white;
+    /* Glassmorphism effect can be added here if desired */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #4b5563 !important;
+    margin: 0 0.5rem;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #6366f1 !important;
+}
+
+/* Underline animation for nav links */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #6366f1;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+/* User Info Section */
+.user-badge {
+    background-color: #f3f4f6;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+.role-badge {
+    background-color: #e0e7ff;
+    color: #4338ca;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border: none;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-outline-primary {
+    border-color: #6366f1;
+    color: #6366f1;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.btn-outline-primary:hover {
+    background-color: #6366f1;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+}

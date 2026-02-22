@@ -1,57 +1,137 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { configDotenv } from "dotenv";
+import { useNavigate } from "react-router-dom";
+
 export default function SearchProducts() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  // 1️⃣ Fetch all products when page loads
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/products`)
-      .then((response) => {
-        setProducts(response.data || []);
-        console.log("Fetched products:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-      });
+      .then(res => setProducts(res.data || []))
+      .catch(err => console.error("Error fetching products:", err))
+      .finally(() => setLoading(false));
   }, []);
 
-  // 2️⃣ Filter products by title
-  // If searchTerm is empty → show all products
-  const filteredProducts = products.filter((product) =>
-    (product.title || "")
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+  const filtered = products.filter(p =>
+    (p.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.category || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="container mt-4">
-      <h2>Search Products</h2>
+    <div style={{ background: "#f8fafc", minHeight: "100vh" }}>
+      <div className="container py-5">
 
-      {/* Search box */}
-      <input
-        type="text"
-        className="form-control mb-3"
-        placeholder="Search by product title..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+        {/* ── Algolia-style search box ─────────────────── */}
+        <div className="mx-auto mb-5" style={{ maxWidth: 560 }}>
+          <div
+            className="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-pill shadow-sm"
+            style={{ border: "1.5px solid #e2e8f0" }}
+          >
+            {/* Search icon */}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="#6366f1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+              style={{ flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
 
-      {/* Show message ONLY when searching and no result */}
-      {filteredProducts.length === 0 && searchTerm !== "" && (
-        <p>No products found</p>
-      )}
+            <input
+              type="text"
+              className="border-0 flex-grow-1 bg-transparent"
+              placeholder="Search products…"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              style={{ outline: "none", fontSize: 15, color: "#1e293b" }}
+              autoFocus
+            />
 
-      {/* 3️⃣ Show ALL or FILTERED cards */}
-      {filteredProducts.map((product) => (
-        <div key={product._id} className="card mb-2 p-3">
-          <h5>{product.title}</h5>
-          <p>Category: {product.category}</p>
-          <p>Price: ₹{product.price}</p>
+            {/* Clear button */}
+            {searchTerm && (
+              <button
+                className="btn p-0 border-0 bg-transparent text-muted"
+                style={{ lineHeight: 1 }}
+                onClick={() => setSearchTerm("")}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            )}
+          </div>
+
+          {/* Result count */}
+          <p className="text-muted small text-center mt-2 mb-0">
+            {loading ? "Loading…" : searchTerm
+              ? `${filtered.length} result${filtered.length !== 1 ? "s" : ""} for "${searchTerm}"`
+              : `${products.length} products available`}
+          </p>
         </div>
-      ))}
+
+        {/* ── Loading ───────────────────────────────────── */}
+        {loading && (
+          <div className="d-flex justify-content-center py-5">
+            <div className="spinner-border text-primary" role="status" />
+          </div>
+        )}
+
+        {/* ── No results ───────────────────────────────── */}
+        {!loading && filtered.length === 0 && searchTerm && (
+          <div className="text-center py-5">
+            <div style={{ fontSize: 52 }}>🔍</div>
+            <h5 className="mt-3 fw-semibold">No products found</h5>
+            <p className="text-muted small">Try a different keyword or category</p>
+            <button className="btn btn-outline-primary rounded-pill px-4" onClick={() => setSearchTerm("")}>
+              Clear Search
+            </button>
+          </div>
+        )}
+
+        {/* ── Product Grid ─────────────────────────────── */}
+        {!loading && filtered.length > 0 && (
+          <div className="row g-3">
+            {filtered.map(product => (
+              <div key={product._id} className="col-6 col-sm-4 col-md-3 col-xl-2">
+                <div
+                  className="card h-100 border-0 shadow-sm rounded-4 overflow-hidden"
+                  style={{ cursor: "pointer", transition: "transform 0.18s, box-shadow 0.18s" }}
+                  onClick={() => navigate(`/view-product/${product._id}`)}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.1)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}
+                >
+                  {/* Image */}
+                  <div style={{ height: 140, background: "#f1f5f9", overflow: "hidden" }}>
+                    {product.image ? (
+                      <img
+                        src={product.image}
+                        alt={product.title}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        onError={e => { e.target.style.display = "none"; }}
+                      />
+                    ) : (
+                      <div className="d-flex align-items-center justify-content-center h-100" style={{ fontSize: 36 }}>📦</div>
+                    )}
+                  </div>
+                  {/* Body */}
+                  <div className="card-body p-2">
+                    <div className="fw-semibold text-truncate" style={{ fontSize: 13 }} title={product.title}>
+                      {product.title}
+                    </div>
+                    <div className="text-muted" style={{ fontSize: 11 }}>{product.category}</div>
+                    <div className="fw-bold mt-1" style={{ color: "#6366f1", fontSize: 14 }}>₹{product.price}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

@@ -53,12 +53,12 @@ export default function ViewProduct() {
                     <img
                         src={
                             product.image
-                                ? `${import.meta.env.VITE_API_URL}/uploads/${product.image}`
+                                ? (product.image.startsWith('http') ? product.image : `${import.meta.env.VITE_API_URL}/uploads/${product.image}`)
                                 : "https://via.placeholder.com/500"
                         }
                         alt={product.title}
                         className="img-fluid rounded shadow-sm"
-                        style={{ maxHeight: "500px", objectFit: "cover", width: "100%" }}
+                        style={{ maxHeight: "600px", objectFit: "cover", width: "70%" }}
                     />
                 </div>
                 <div className="col-md-6">

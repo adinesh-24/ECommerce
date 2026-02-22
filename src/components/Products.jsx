@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; // ✅ Import Link
 import axios from "axios";
-import { useCart } from "./context/CartContext"; // ✅ import useCart hook
-import { configDotenv } from "dotenv";
+import { useCart } from "./context/CartContext";
 export default function Products() {
 
   const [cards, setCards] = useState([]);
@@ -52,10 +51,10 @@ export default function Products() {
               <div className="card-body text-center">
 
                 <img
-                  src={`${import.meta.env.VITE_API_URL}/uploads/${item.image}`}
+                  src={`${item.image}`}
                   alt={item.title}
                   className="img-fluid mb-2 rounded"
-                  style={{ height: "200px", width: "100%", objectFit: "cover" }}
+                  style={{ height: "200px", width: "90%", objectFit: "cover" }}
                 />
 
                 <h5

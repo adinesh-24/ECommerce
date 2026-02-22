@@ -122,17 +122,15 @@ export default function Cart() {
               </button>
 
               <img
-                src={
-                  item.product.image
-                    ? `${import.meta.env.VITE_API_URL}/uploads/${item.product.image}`
-                    : "https://via.placeholder.com/80"
-                }
+                src={item.product.image || "https://placehold.co/80"}
                 alt={item.product.title}
                 style={{
                   width: "80px",
                   height: "80px",
-                  objectFit: "cover"
+                  objectFit: "cover",
+                  borderRadius: "8px"
                 }}
+                onError={(e) => { e.target.src = "https://placehold.co/80"; }}
               />
 
               <div>
