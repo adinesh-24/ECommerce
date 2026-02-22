@@ -34,7 +34,7 @@ export default function MyOrders() {
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/order/my-orders`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setOrders(res.data);
+                setOrders(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error("Error fetching orders:", err);
             } finally {

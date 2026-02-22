@@ -15,7 +15,7 @@ export default function Products() {
     axios
       .get(`${import.meta.env.VITE_API_URL}/products`)
       .then((response) => {
-        setCards(response.data);
+        setCards(Array.isArray(response.data) ? response.data : []);
         setLoading(false);
       })
       .catch((error) => {

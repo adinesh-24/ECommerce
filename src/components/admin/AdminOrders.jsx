@@ -16,7 +16,7 @@ export default function AdminOrders() {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/order`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setOrders(res.data);
+            setOrders(Array.isArray(res.data) ? res.data : []);
             console.log(res.data);
         } catch (err) {
             console.error("Error fetching orders:", err);
