@@ -104,92 +104,81 @@ export default function Cart() {
 
         <h4 className="mb-4">Shopping Bag</h4>
 
-        {cart.map(item => (
-
-          <div
-            key={item._id}
-            className="d-flex justify-content-between align-items-center border-bottom py-3"
-          >
-
-            {/* LEFT SIDE */}
-            <div className="d-flex align-items-center gap-3">
-
-              <button
-                className="btn btn-sm btn-light"
-                onClick={() => removeItem(item._id)}
-              >
-                ✕
-              </button>
-
-              <img
-                src={item.product.image || "https://placehold.co/80"}
-                alt={item.product.title}
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  objectFit: "cover",
-                  borderRadius: "8px"
-                }}
-                onError={(e) => { e.target.src = "https://placehold.co/80"; }}
-              />
-
-              <div>
-                <h6>{item.product.title}</h6>
-                <small className="text-muted">
-                  {item.product.category}
-                </small>
-              </div>
-
-            </div>
-
-            {/* RIGHT SIDE */}
-            <div className="d-flex align-items-center gap-4">
-
-              <div className="d-flex align-items-center gap-2">
-
+        <div className="cart-items">
+          {cart.map(item => (
+            <div
+              key={item._id}
+              className="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom py-3 gap-3"
+            >
+              {/* LEFT SIDE: Image and Details */}
+              <div className="d-flex align-items-center gap-3">
                 <button
-                  className="btn btn-light"
-                  onClick={() =>
-                    updateQty(item._id, item.quantity - 1)
-                  }
+                  className="btn btn-sm btn-outline-danger border-0"
+                  onClick={() => removeItem(item._id)}
+                  title="Remove"
                 >
-                  -
+                  ✕
                 </button>
 
-                <span>{item.quantity}</span>
+                <img
+                  src={item.product.image || "https://placehold.co/80"}
+                  alt={item.product.title}
+                  style={{
+                    width: "70px",
+                    height: "70px",
+                    objectFit: "cover",
+                    borderRadius: "8px"
+                  }}
+                  onError={(e) => { e.target.src = "https://placehold.co/80"; }}
+                />
 
-                <button
-                  className="btn btn-light"
-                  onClick={() =>
-                    updateQty(item._id, item.quantity + 1)
-                  }
-                >
-                  +
-                </button>
-
+                <div className="flex-grow-1">
+                  <h6 className="mb-0 text-truncate" style={{ maxWidth: "200px" }}>
+                    {item.product.title}
+                  </h6>
+                  <small className="text-muted d-block">
+                    {item.product.category}
+                  </small>
+                  <small className="fw-bold d-md-none">₹{item.totalPrice}</small>
+                </div>
               </div>
 
-              <strong>₹{item.totalPrice}</strong>
+              {/* RIGHT SIDE: Controls and Price */}
+              <div className="d-flex align-items-center justify-content-between justify-content-md-end gap-3 gap-md-4">
+                <div className="d-flex align-items-center gap-2 bg-light rounded-pill px-2">
+                  <button
+                    className="btn btn-sm p-1"
+                    onClick={() => updateQty(item._id, item.quantity - 1)}
+                  >
+                    -
+                  </button>
+                  <span className="px-2 small fw-bold">{item.quantity}</span>
+                  <button
+                    className="btn btn-sm p-1"
+                    onClick={() => updateQty(item._id, item.quantity + 1)}
+                  >
+                    +
+                  </button>
+                </div>
 
+                <strong className="d-none d-md-block" style={{ minWidth: "80px", textAlign: "right" }}>
+                  ₹{item.totalPrice}
+                </strong>
+              </div>
             </div>
-
-          </div>
-
-        ))}
+          ))}
+        </div>
 
         {/* FOOTER */}
-        <div className="d-flex justify-content-between align-items-center mt-4">
-
-          <h5>Total: ₹{grandTotal}</h5>
-
+        <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-4 gap-3">
+          <h5 className="mb-0">Total: ₹{grandTotal}</h5>
           <button
-            className="btn btn-dark px-4"
+            className="btn btn-dark px-5 py-2 rounded-pill fw-bold w-100 w-sm-auto"
             disabled={cart.length === 0}
             onClick={handleCheckout}
           >
             Checkout
           </button>
-
         </div>
 
       </div>

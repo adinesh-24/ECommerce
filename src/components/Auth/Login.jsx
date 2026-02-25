@@ -41,6 +41,7 @@ export default function Login() {
                             value={form.email}
                             onChange={handleChange}
                             required
+                            autoFocus
                         />
                     </div>
                     <div className="mb-3">
