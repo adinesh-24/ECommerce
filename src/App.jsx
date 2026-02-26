@@ -18,6 +18,7 @@ import Products from "./components/Products.jsx";
 import ViewProduct from "./components/ViewProduct.jsx"; // ✅ Import ViewProduct
 import Login from "./components/Auth/Login.jsx";
 import SignUp from "./components/Auth/SignUp.jsx";
+import VerifyAccount from "./components/Auth/VerifyAccount.jsx";
 import ForgotPassword from "./components/Auth/ForgotPassword.jsx";
 import ProtectedRoute, { GuestRoute } from "./components/Auth/ProtectedRoute.jsx";
 import Cart from "./components/cart/Cart.jsx";
@@ -30,7 +31,7 @@ function Layout() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const hideNavbarRoutes = ["/login", "/register", "/forgot-password"];
+  const hideNavbarRoutes = ["/login", "/register", "/forgot-password", "/verify-account"];
 
   // Global axios interceptor: auto-logout on 401 (token expired)
   useEffect(() => {
@@ -61,6 +62,7 @@ function Layout() {
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<SignUp />} />
+          <Route path="/verify-account" element={<VerifyAccount />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Route>
 
