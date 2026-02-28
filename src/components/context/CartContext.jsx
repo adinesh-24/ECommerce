@@ -8,6 +8,25 @@ export const CartProvider = ({ children }) => {
 
   const [cart, setCart] = useState([]);
 
+  // Fetch Cart
+  const fetchCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/cart`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setCart(res.data || []);
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchCart();
+  }, []);
+
   // ✅ ADD TO CART FUNCTION
   const addToCart = async (productId) => {
     try {
@@ -28,7 +47,8 @@ export const CartProvider = ({ children }) => {
         }
       );
 
-      setCart(res.data); // update cart state
+      setCart(res.data.data ? [...cart, res.data.data] : res.data); // Adjust based on API structure
+      fetchCart(); // Refresh to ensure sync
       toast.success("Added to cart successfully! ✅");
 
     } catch (error) {
@@ -38,7 +58,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart }}>
+    <CartContext.Provider value={{ cart, cartCount: cart.length, addToCart, fetchCart }}>
       {children}
     </CartContext.Provider>
   );
