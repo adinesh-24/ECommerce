@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { useCart } from "./context/CartContext";
 
 export default function Navbar() {
     const navigate = useNavigate();
@@ -18,10 +19,20 @@ export default function Navbar() {
         }
     }, [location.pathname]);
 
+    const [searchTerm, setSearchTerm] = useState("");
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         setUser(null);
         navigate("/login");
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchTerm.trim()) {
+            navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+            setSearchTerm("");
+        }
     };
 
     return (
@@ -90,12 +101,13 @@ export default function Navbar() {
 
                     </ul>
 
+
                     {/* Right: auth */}
                     <div className="d-flex align-items-center gap-2">
                         {!user ? (
                             <>
-                                <NavLink to="/login" className="btn btn-outline-primary btn-sm">Login</NavLink>
                                 <NavLink to="/register" className="btn btn-primary btn-sm">Sign Up</NavLink>
+                                <NavLink to="/login" className="btn btn-outline-primary btn-sm">Login</NavLink>
                             </>
                         ) : (
                             <>

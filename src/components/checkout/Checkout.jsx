@@ -9,7 +9,7 @@ const PAYMENT_METHODS = [
   {
     id: "cod",
     label: "Cash on Delivery",
-    icon: "💵",
+    icon: null,
     description: "Pay when your order arrives at your doorstep.",
     available: true,
     badge: null,
@@ -17,7 +17,7 @@ const PAYMENT_METHODS = [
   {
     id: "upi",
     label: "UPI / Razorpay",
-    icon: "📲",
+    icon: null,
     description: "Pay securely using UPI, Cards, or Net Banking via Razorpay.",
     available: false,
     badge: "Coming Soon",
@@ -131,7 +131,7 @@ export default function Checkout() {
 
   return (
     <div className="container mt-4 mb-5">
-      <h3 className="mb-4 fw-bold">🛒 Checkout</h3>
+      <h3 className="mb-4 fw-bold">Checkout</h3>
 
       <div className="row g-4">
         {/* ── LEFT: Address + Payment ─────────────────────── */}
@@ -140,7 +140,7 @@ export default function Checkout() {
           {/* Address Section */}
           <div className="card border-0 shadow-sm rounded-4 p-4 mb-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="fw-bold mb-0">📍 Shipping Address</h5>
+              <h5 className="fw-bold mb-0">Shipping Address</h5>
               {!showAddressForm && (
                 <button
                   className="btn btn-outline-primary btn-sm rounded-pill px-3"
@@ -183,7 +183,7 @@ export default function Checkout() {
                           <div className="text-muted small mt-1">
                             {addr.address}, {addr.city}, {addr.state} – {addr.pincode}
                           </div>
-                          <div className="text-muted small">📞 {addr.phone}</div>
+                          <div className="text-muted small">Phone: {addr.phone}</div>
                         </div>
                       </div>
                       <div className="d-flex gap-2 ms-2">
@@ -202,7 +202,7 @@ export default function Checkout() {
 
           {/* ── Payment Method Section ────────────────────── */}
           <div className="card border-0 shadow-sm rounded-4 p-4">
-            <h5 className="fw-bold mb-3">💳 Payment Method</h5>
+            <h5 className="fw-bold mb-3">Payment Method</h5>
 
             <div className="d-flex flex-column gap-3">
               {PAYMENT_METHODS.map(method => (
@@ -233,8 +233,7 @@ export default function Checkout() {
                     style={{ width: 18, height: 18 }}
                   />
 
-                  {/* Icon */}
-                  <span style={{ fontSize: 26 }}>{method.icon}</span>
+                  {/* Icon removal handled in text section */}
 
                   {/* Text */}
                   <div className="flex-grow-1">
@@ -252,7 +251,7 @@ export default function Checkout() {
 
                   {/* Lock icon for unavailable */}
                   {!method.available && (
-                    <span className="text-muted" title="Not yet available">🔒</span>
+                    <span className="text-muted" title="Not yet available">Locked</span>
                   )}
                 </div>
               ))}
@@ -264,7 +263,6 @@ export default function Checkout() {
                 className="alert alert-warning d-flex align-items-center gap-2 mt-3 mb-0 rounded-3 py-2 px-3"
                 style={{ fontSize: 14, border: "1.5px solid #fbbf24" }}
               >
-                <span style={{ fontSize: 20 }}>🚧</span>
                 <div>
                   <strong>Razorpay UPI is coming soon!</strong><br />
                   <span className="text-muted small">We're working on integrating Razorpay. For now, please use Cash on Delivery.</span>
@@ -278,7 +276,7 @@ export default function Checkout() {
         {/* ── RIGHT: Order Summary ──────────────────────────── */}
         <div className="col-lg-4">
           <div className="card border-0 shadow-sm rounded-4 p-4 sticky-top" style={{ top: 80 }}>
-            <h5 className="fw-bold mb-3">🧾 Order Summary</h5>
+            <h5 className="fw-bold mb-3">Order Summary</h5>
             <hr />
             {cart.map(item => (
               <div key={item._id} className="d-flex justify-content-between mb-2 small">
@@ -304,7 +302,6 @@ export default function Checkout() {
 
             {/* Selected payment indicator */}
             <div className="rounded-3 bg-light px-3 py-2 mb-3 small d-flex align-items-center gap-2">
-              <span>💳</span>
               <span className="text-muted">Payment:</span>
               <strong className="text-capitalize">{paymentMethod === "cod" ? "Cash on Delivery" : "UPI / Razorpay"}</strong>
             </div>
@@ -317,11 +314,11 @@ export default function Checkout() {
               {placing ? (
                 <><span className="spinner-border spinner-border-sm me-2" />Placing Order...</>
               ) : paymentMethod === "upi" ? (
-                "🔒 Razorpay Coming Soon"
+                "Razorpay Coming Soon"
               ) : !selectedAddressId ? (
                 "Select an Address"
               ) : (
-                "✅ Place Order (COD)"
+                "Place Order (COD)"
               )}
             </button>
 

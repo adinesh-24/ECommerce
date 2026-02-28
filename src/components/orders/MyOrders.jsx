@@ -133,8 +133,8 @@ export default function MyOrders() {
                                             {/* User */}
                                             <div className="rounded-3 p-3 mb-3" style={{ background: "#f8fafc" }}>
                                                 <p className="text-uppercase fw-bold mb-2" style={{ fontSize: 11, letterSpacing: 1, color: "#64748b" }}>Customer</p>
-                                                <p className="mb-1 small"><strong>Name:</strong> {user?.username || "N/A"}</p>
-                                                <p className="mb-0 small"><strong>Email:</strong> {user?.email || "N/A"}</p>
+                                                <p className="mb-1 small"><strong>Name:</strong> {order.userId?.username || "N/A"}</p>
+                                                <p className="mb-0 small"><strong>Email:</strong> {order.userId?.email || "N/A"}</p>
                                             </div>
 
                                             {/* Payment */}

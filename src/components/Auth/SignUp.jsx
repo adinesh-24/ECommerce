@@ -23,9 +23,16 @@ export default function SignUp() {
 
         setLoading(true);
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, form);
-            toast.success("Account created! Please log in.");
-            navigate("/login");
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, form);
+
+            if (res.data.token) {
+                localStorage.setItem("token", res.data.token);
+                toast.success("Account created! Welcome to our store.");
+                navigate("/", { replace: true });
+            } else {
+                toast.success(res.data.message || "Account created! You can now login.");
+                navigate("/login");
+            }
         } catch (err) {
             toast.error(err.response?.data?.message || "Registration failed. Please try again.");
         } finally {

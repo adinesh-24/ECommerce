@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "./context/CartContext";
 
 export default function SearchProducts() {
+  const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -96,11 +98,10 @@ export default function SearchProducts() {
         {!loading && filtered.length > 0 && (
           <div className="row g-3">
             {filtered.map(product => (
-              <div key={product._id} className="col-6 col-sm-4 col-md-3 col-xl-2">
+              <div key={product._id} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div
                   className="card h-100 border-0 shadow-sm rounded-4 overflow-hidden"
-                  style={{ cursor: "pointer", transition: "transform 0.18s, box-shadow 0.18s" }}
-                  onClick={() => navigate(`/view-product/${product._id}`)}
+                  style={{ transition: "transform 0.18s, box-shadow 0.18s" }}
                   onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.1)"; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}
                 >
@@ -123,7 +124,25 @@ export default function SearchProducts() {
                       {product.title}
                     </div>
                     <div className="text-muted" style={{ fontSize: 11 }}>{product.category}</div>
-                    <div className="fw-bold mt-1" style={{ color: "#6366f1", fontSize: 14 }}>₹{product.price}</div>
+                    <div className="d-flex justify-content-between align-items-center mt-2">
+                      <div className="fw-bold text-primary" style={{ fontSize: 16 }}>₹{product.price}</div>
+                      <button
+                        className="btn btn-sm btn-primary rounded-pill px-3 fw-semibold"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(product._id);
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
+                    <button
+                      className="btn btn-link btn-sm text-decoration-none w-100 mt-1 pb-0 text-muted"
+                      style={{ fontSize: 11 }}
+                      onClick={() => navigate(`/view-product/${product._id}`)}
+                    >
+                      View Details
+                    </button>
                   </div>
                 </div>
               </div>
